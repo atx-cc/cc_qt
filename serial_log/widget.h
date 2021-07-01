@@ -18,7 +18,8 @@ public:
     ~Widget();
 
 private slots:
-    void serial_data_send_hex(QString senddata);
+    void serial_data_send_string(QString senddata);
+    void serial_data_send_hex(QByteArray senddata);
     void serial_data_handle(const QByteArray &data);
 
     void readData();
