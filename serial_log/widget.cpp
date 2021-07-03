@@ -16,7 +16,7 @@ Widget::Widget(QWidget *parent)
     setWindowFlags(windowFlags()& ~Qt::WindowMaximizeButtonHint);
     setFixedSize(this->width(), this->height());
     this->setWindowTitle("serial");
-    /* 创建一个串口对象 */
+
     serialPort = new QSerialPort(this);
     ui->serial_off_button->setEnabled(false);
 }
@@ -30,14 +30,14 @@ Widget::~Widget()
 void Widget::on_serial_on_button_clicked()
 {
 
-    /* 串口设置 */
+    /* uart setting */
     serialPort->setPortName(ui->serial_select->currentText());
     serialPort->setBaudRate(ui->baudrate_select->currentText().toInt());
     serialPort->setDataBits(QSerialPort::Data8);
     serialPort->setStopBits(QSerialPort::OneStop);
     serialPort->setParity(QSerialPort::NoParity);
 
-    /* 打开串口提示框 */
+    //open serial port
     if (true == serialPort->open(QIODevice::ReadWrite))
     {
         ui->serial_on_button->setEnabled(false);
@@ -78,7 +78,7 @@ void Widget::on_search_button_clicked()
 {
     QStringList serialNamePort;
     ui->serial_select->clear();
-    /* 搜索所有可用串口 */
+    //search all serial port
     foreach (const QSerialPortInfo &inf0, QSerialPortInfo::availablePorts()) {
         serialNamePort<<inf0.portName();
     }
@@ -140,17 +140,22 @@ void Widget::serial_data_send_string(QString senddata)
     serialPort->write(send);
 }
 
+//chip -> tool
 QString handShakeRequest    = "be500003000001ed";
 QString handShakeSuccess    = "be500003020001eb";
 QString ramrunAddrSuccess   = "be53000100ed";
-QString loadRamrunSuccess   = "be54a201202a";
+QString loadRamrunSuccess   = "be54000120cc";
+QString executeCode         = "be600006";
 
+//tool -> chip
 QString sendHandshake       = "be50000101ef";
-//QString sendSetRamrunAddr   = "be53000cdc050120c4080100f008fbef31";
-QString sendSetRamrunHeard  = "be53000c";
+QString sendSetRamrunHeard  = "be53000c"; //QString sendSetRamrunAddr   = "be53000cdc050120c4080100f008fbef31";
+QString sendRamrunHead      = "be540003000000ea";
+QString sendRunRamrun       = "be553c00b0";
 
 #define RAMRUN_BUFF_OFFSET  1052
 #define RAMRUN_TAIL_LEN     4
+QByteArray ramrunsubbuf;
 
 void Widget::serial_data_handle(const QByteArray &data)
 {
@@ -163,23 +168,24 @@ void Widget::serial_data_handle(const QByteArray &data)
     if(redata.compare(handShakeSuccess) == 0)
     {
         qDebug()<<"handShakeSuccess cmd";
-        QFile file("./programmer1400.bin");
+        QString chip_version = ui->chip_version_select->currentText();
+        QFile file("./programmer" + chip_version + ".bin");
         if(!file.open(QIODevice::ReadWrite))
         {
            qDebug("open fail ");
            QMessageBox::critical(this, "提示", "文件打开失败");
         }
-        QByteArray buf = file.readAll();//读取文件所有数据
-        file.close();//关闭文件
+        QByteArray buf = file.readAll();
+        file.close();
         QByteArray sendbuf;
         QByteArray headbuf = QByteArray::fromHex(sendSetRamrunHeard.toLocal8Bit());
         QByteArray codeEntrybuf = buf.mid(buf.length()-RAMRUN_TAIL_LEN, RAMRUN_TAIL_LEN);
-        QByteArray subbuf = buf.remove(0, RAMRUN_BUFF_OFFSET);
-        subbuf = subbuf.remove(subbuf.length()-RAMRUN_TAIL_LEN, RAMRUN_TAIL_LEN);
-        uint32_t crc = CRC32(subbuf, subbuf.length());
+        ramrunsubbuf = buf.remove(0, RAMRUN_BUFF_OFFSET);
+        ramrunsubbuf = ramrunsubbuf.remove(ramrunsubbuf.length()-RAMRUN_TAIL_LEN, RAMRUN_TAIL_LEN);
+        uint32_t crc = CRC32(ramrunsubbuf, ramrunsubbuf.length());
         QByteArray crcbuf = intToByteArray(crc);
-        QByteArray lenbuf = intToByteArray(subbuf.length());
-        sendbuf = headbuf.append(codeEntrybuf).append(crcbuf).append(lenbuf);
+        QByteArray lenbuf = intToByteArray(ramrunsubbuf.length());
+        sendbuf = headbuf.append(codeEntrybuf).append(lenbuf).append(crcbuf);
         QByteArray checksumbuf = u8ToByteArray(besChecksum(sendbuf));
         sendbuf = sendbuf.append(checksumbuf);
         serial_data_send_hex(sendbuf);
@@ -187,6 +193,18 @@ void Widget::serial_data_handle(const QByteArray &data)
     if(redata.compare(ramrunAddrSuccess) == 0)
     {
         qDebug()<<"set ramrun addr success";
+        QByteArray sendramrunbuf = QByteArray::fromHex(sendRamrunHead.toLocal8Bit());
+        sendramrunbuf = sendramrunbuf.append(ramrunsubbuf);
+        serial_data_send_hex(sendramrunbuf);
+    }
+    if(redata.compare(loadRamrunSuccess) == 0)
+    {
+        qDebug()<<"load ramrun success";
+        serial_data_send_string(sendRunRamrun);
+    }
+    if(true == redata.contains(executeCode, Qt::CaseInsensitive))
+    {
+        qDebug()<<"run ramrun code";
     }
 }
 

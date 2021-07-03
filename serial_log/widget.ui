@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
-    <height>405</height>
+    <width>363</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
   <widget class="QLabel" name="serial_label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>30</y>
+     <x>30</x>
+     <y>40</y>
      <width>54</width>
      <height>20</height>
     </rect>
@@ -32,8 +32,8 @@
   <widget class="QLabel" name="baudrate_label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>70</y>
+     <x>30</x>
+     <y>80</y>
      <width>54</width>
      <height>21</height>
     </rect>
@@ -45,8 +45,8 @@
   <widget class="QComboBox" name="serial_select">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>30</y>
+     <x>110</x>
+     <y>40</y>
      <width>101</width>
      <height>21</height>
     </rect>
@@ -55,8 +55,8 @@
   <widget class="QComboBox" name="baudrate_select">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>70</y>
+     <x>110</x>
+     <y>80</y>
      <width>101</width>
      <height>21</height>
     </rect>
@@ -75,8 +75,8 @@
   <widget class="QPushButton" name="serial_on_button">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>110</y>
+     <x>110</x>
+     <y>160</y>
      <width>101</width>
      <height>31</height>
     </rect>
@@ -88,8 +88,8 @@
   <widget class="QPushButton" name="serial_off_button">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>110</y>
+     <x>230</x>
+     <y>160</y>
      <width>101</width>
      <height>31</height>
     </rect>
@@ -101,8 +101,8 @@
   <widget class="QPushButton" name="search_button">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>30</y>
+     <x>230</x>
+     <y>40</y>
      <width>101</width>
      <height>31</height>
     </rect>
@@ -117,8 +117,8 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>230</y>
+     <x>230</x>
+     <y>310</y>
      <width>101</width>
      <height>31</height>
     </rect>
@@ -136,8 +136,8 @@
   <widget class="QPushButton" name="sendButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>190</y>
+     <x>230</x>
+     <y>260</y>
      <width>101</width>
      <height>31</height>
     </rect>
@@ -149,8 +149,8 @@
   <widget class="QCheckBox" name="hex_send">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>190</y>
+     <x>30</x>
+     <y>260</y>
      <width>161</width>
      <height>21</height>
     </rect>
@@ -162,9 +162,9 @@
   <widget class="QTextEdit" name="send_text">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>150</y>
-     <width>271</width>
+     <x>30</x>
+     <y>220</y>
+     <width>301</width>
      <height>31</height>
     </rect>
    </property>
@@ -172,8 +172,8 @@
   <widget class="QCheckBox" name="hex_display">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>237</y>
+     <x>30</x>
+     <y>320</y>
      <width>101</width>
      <height>21</height>
     </rect>
@@ -185,9 +185,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>122</y>
-     <width>54</width>
+     <x>30</x>
+     <y>200</y>
+     <width>51</width>
      <height>20</height>
     </rect>
    </property>
@@ -198,12 +198,40 @@
   <widget class="QPlainTextEdit" name="result_text">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>270</y>
-     <width>271</width>
+     <x>30</x>
+     <y>360</y>
+     <width>301</width>
      <height>101</height>
     </rect>
    </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>120</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>芯片选择</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="chip_version_select">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>120</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>1400</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>
